@@ -38,7 +38,11 @@ Write-Host "Aplicativo em execução (PID $($proc.Id))."
 $db = Get-ChildItem $env:APPDATA -Recurse -Filter "gmn_book.db" -ErrorAction SilentlyContinue | Select-Object -First 1
 if (-not $db) { throw "Banco de dados local não foi criado em %APPDATA%" }
 Write-Host "Banco criado em: $($db.FullName) ($($db.Length) bytes)"
-$head = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($db.FullName)[0..14])
+$fs = [System.IO.File]::Open($db.FullName, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
+$buf = New-Object byte[] 15
+[void]$fs.Read($buf, 0, 15)
+$fs.Close()
+$head = [System.Text.Encoding]::ASCII.GetString($buf)
 if ($head -eq "SQLite format 3") { throw "O banco NÃO está criptografado" }
 Write-Host "Banco criptografado: ok"
 Stop-Process -Id $proc.Id -Force
