@@ -33,11 +33,11 @@ enum StartupState { ok, corrupted, keyMissing, openFailed }
 
 /// Contexto da biblioteca: banco, pastas e servicos.
 class Library {
-  Library._(this.dataDir, this._db, this.keyStore, this._hexKey);
+  Library._(this.dataDir, this.keyStore, this._hexKey);
 
   final Directory? dataDir;
   final KeyStore keyStore;
-  AppDatabase _db;
+  late AppDatabase _db;
   String? _hexKey;
   StartupState state = StartupState.ok;
   String? stateDetail;
@@ -64,7 +64,7 @@ class Library {
 
   /// Banco em memoria, para testes automatizados.
   static Future<Library> inMemory() async {
-    final lib = Library._(null, AppDatabase.memory(), MemoryKeyStore(), null);
+    final lib = Library._(null, MemoryKeyStore(), null).._db = AppDatabase.memory();
     await lib._postOpen();
     return lib;
   }
@@ -93,7 +93,7 @@ class Library {
     late Library lib;
     if (state == StartupState.keyMissing) {
       // Abre um banco temporario vazio so para a tela de recuperacao.
-      lib = Library._(dataDir, AppDatabase.memory(), keyStore, null);
+      lib = Library._(dataDir, keyStore, null).._db = AppDatabase.memory();
       lib.state = state;
       lib.stateDetail =
           'O arquivo de dados existe, mas a chave de proteção deste aparelho não foi encontrada.';
@@ -101,7 +101,7 @@ class Library {
       return lib;
     }
 
-    lib = Library._(dataDir, _openFile(dbFile, key, null), keyStore, key);
+    lib = Library._(dataDir, keyStore, key);
     lib._db = _openFile(dbFile, key, lib);
     try {
       await lib.db.q('SELECT count(*) FROM sqlite_master');

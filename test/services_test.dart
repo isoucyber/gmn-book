@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gmn_book/core/errors.dart';
 import 'package:gmn_book/core/util.dart';
@@ -53,6 +54,7 @@ Future<Map<String, Object?>> firstCopy(Library lib, Session s, String bookId, {S
 
 void main() {
   setUpAll(() {
+    driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
     // Custo reduzido de Argon2id apenas nos testes.
     PasswordHasher.memoryKiB = 64;
     PasswordHasher.iterations = 1;
@@ -71,8 +73,8 @@ void main() {
       expect(fuzzyMatch('harry', normalize('Dom Casmurro')), isFalse);
     });
     test('validacao de ISBN', () {
-      expect(cleanIsbn('978-85-359-0277-7'), '9788535902777');
-      expect(cleanIsbn('9788535902778'), isNull);
+      expect(cleanIsbn('978-85-359-0277-8'), '9788535902778');
+      expect(cleanIsbn('9788535902777'), isNull);
       expect(cleanIsbn('0-306-40615-2'), '0306406152');
     });
     test('UUID v4', () {
@@ -201,7 +203,7 @@ void main() {
   group('Acervo', () {
     test('cadastro, exemplares com tombo unico, busca offline e arquivamento', () async {
       final (lib, host) = await bootstrap();
-      final id = await addBook(lib, host, 'Dom Casmurro', copies: 3, loanDays: 14, isbn: '978-85-359-0277-7');
+      final id = await addBook(lib, host, 'Dom Casmurro', copies: 3, loanDays: 14, isbn: '978-85-359-0277-8');
       final b = await lib.catalog.getBook(host, id);
       expect(b!['total'], 3);
       expect(b['available'], 3);
@@ -215,8 +217,8 @@ void main() {
       await addBook(lib, host, 'O Pequeno Príncipe', authors: ['Antoine de Saint-Exupéry']);
       expect((await lib.catalog.search(host, query: 'machado de assiz')).first['id'], id);
       expect((await lib.catalog.search(host, query: 'pequeno principe')).length, 1);
-      expect((await lib.catalog.search(host, query: '9788535902777')).first['id'], id);
-      expect((await lib.catalog.findDuplicates(host, isbn: '9788535902777')).length, 1);
+      expect((await lib.catalog.search(host, query: '9788535902778')).first['id'], id);
+      expect((await lib.catalog.findDuplicates(host, isbn: '9788535902778')).length, 1);
       expect((await lib.catalog.findDuplicates(host, title: 'dom casmurro')).length, 1);
 
       await lib.catalog.setArchived(host, id, true);
@@ -226,7 +228,7 @@ void main() {
 
     test('ISBN invalido e rejeitado', () async {
       final (lib, host) = await bootstrap();
-      await expectLater(addBook(lib, host, 'X', isbn: '9788535902778'), throwsA(isA<ValidationException>()));
+      await expectLater(addBook(lib, host, 'X', isbn: '9788535902777'), throwsA(isA<ValidationException>()));
     });
   });
 
@@ -263,8 +265,8 @@ void main() {
 
     test('exemplar nao pode ser emprestado a duas pessoas e disponibilidade e atualizada', () async {
       final (lib, host) = await bootstrap();
-      final a = await addReader(lib, host, 'A', 'leitora');
-      final b = await addReader(lib, host, 'B', 'leitorb');
+      final a = await addReader(lib, host, 'Ana Leitora', 'leitora');
+      final b = await addReader(lib, host, 'Bruno Leitor', 'leitorb');
       final book = await addBook(lib, host, 'Unico', copies: 1);
       final copy = (await firstCopy(lib, host, book))['id'] as String;
       await lib.circulation.checkout(host, userId: a, copyId: copy);
