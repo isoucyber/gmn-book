@@ -1,0 +1,59 @@
+name: gmn_book
+description: "GMN BOOK OFFLINE - gerenciamento de biblioteca escolar com armazenamento 100% local."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.10.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Banco local (SQLite via Drift). O binario nativo do SQLite e fornecido
+  # pelos build hooks do pacote sqlite3 (>=3.0); usamos SQLite3MultipleCiphers
+  # para criptografar o arquivo do banco (ver secao hooks no final).
+  drift: ^2.35.0
+  sqlite3: ^3.4.0
+  path: ^1.9.0
+  path_provider: any
+
+  # Seguranca
+  cryptography: ^2.7.0
+  flutter_secure_storage: any
+
+  # Arquivos, rede e camera
+  file_picker: any
+  http: any
+  mobile_scanner: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: any
+  flutter_launcher_icons: any
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/brand/
+
+flutter_launcher_icons:
+  android: true
+  image_path: "assets/brand/icon.png"
+  adaptive_icon_background: "#0B4F5C"
+  adaptive_icon_foreground: "assets/brand/icon_foreground.png"
+  min_sdk_android: 21
+  windows:
+    generate: true
+    image_path: "assets/brand/icon.png"
+    icon_size: 256
+
+hooks:
+  user_defines:
+    sqlite3:
+      source: sqlite3mc

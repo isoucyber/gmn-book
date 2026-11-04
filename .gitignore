@@ -1,0 +1,21 @@
+# Flutter/Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+.idea/
+.vscode/
+# Projetos nativos sao gerados no CI por `flutter create` + tool/patch_platforms.py
+/android/
+/windows/
+/ios/
+/linux/
+/macos/
+/web/
+# Saidas de build e segredos
+/releases/
+*.jks
+*.keystore
+key.properties
