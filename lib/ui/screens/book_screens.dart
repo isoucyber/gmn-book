@@ -368,10 +368,11 @@ class _BookFormScreenState extends State<BookFormScreen> {
 
   Future<void> _load() async {
     final lib = context.lib;
+    final session = context.session;
     final settings = await lib.settings.load();
     _defaultDays = settings.defaultLoanDays;
     if (_editing) {
-      final b = await lib.catalog.getBook(context.session, widget.bookId!);
+      final b = await lib.catalog.getBook(session, widget.bookId!);
       if (b != null) {
         for (final k in ['title', 'subtitle', 'isbn', 'publisher', 'category', 'genre', 'language', 'description', 'location', 'restriction_note']) {
           _c[k]!.text = (b[k] as String?) ?? '';

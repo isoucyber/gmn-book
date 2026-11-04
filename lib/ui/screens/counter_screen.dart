@@ -268,9 +268,11 @@ class _CheckoutTabState extends State<_CheckoutTab> with AutomaticKeepAliveClien
                           tooltip: 'Procurar por nome',
                           icon: const Icon(Icons.person_search),
                           onPressed: () async {
+                            final lib = context.lib;
+                            final session = context.session;
                             final u = await pickUser(context);
                             if (u != null) {
-                              final full = await context.lib.users.findByCode(context.session, u['card_code'] as String);
+                              final full = await lib.users.findByCode(session, u['card_code'] as String);
                               if (full != null) await _setUser(full);
                               _copyFocus.requestFocus();
                             }

@@ -51,7 +51,7 @@ class _DueList extends StatelessWidget {
         return ListView.separated(
           padding: const EdgeInsets.all(16),
           itemCount: rows.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 8),
+          separatorBuilder: (_, _) => const SizedBox(height: 8),
           itemBuilder: (_, i) => PageBody(child: LoanCard(loan: rows[i], showContact: kind == 1)),
         );
       },
@@ -72,7 +72,7 @@ class _ReturnedList extends StatelessWidget {
         return ListView.separated(
           padding: const EdgeInsets.all(16),
           itemCount: rows.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 8),
+          separatorBuilder: (_, _) => const SizedBox(height: 8),
           itemBuilder: (_, i) {
             final l = rows[i];
             final daysLate = daysBetween(parseIsoDate(l['due_date'] as String), parseIsoDate(l['return_date'] as String));

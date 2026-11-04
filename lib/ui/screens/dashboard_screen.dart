@@ -209,7 +209,7 @@ class _ChartCard extends StatelessWidget {
                           tween: Tween(begin: 0, end: e.value / max),
                           duration: const Duration(milliseconds: 500),
                           curve: Curves.easeOut,
-                          builder: (_, v, __) => Container(
+                          builder: (_, v, _) => Container(
                             height: 96 * v + 2,
                             margin: const EdgeInsets.symmetric(horizontal: 6),
                             decoration: BoxDecoration(
