@@ -199,24 +199,38 @@ class StatCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(color: c.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(12)),
-              child: Icon(icon, color: c),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(value, style: t.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700)),
-                Text(label, style: t.textTheme.bodySmall, maxLines: 2, overflow: TextOverflow.ellipsis),
-              ]),
-            ),
-          ]),
-        ),
+        child: LayoutBuilder(builder: (context, box) {
+          // Em celulares (cartao estreito) o icone fica acima do numero.
+          final compact = box.maxWidth < 210;
+          final iconBox = Container(
+            width: compact ? 32 : 44,
+            height: compact ? 32 : 44,
+            decoration: BoxDecoration(color: c.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
+            child: Icon(icon, color: c, size: compact ? 18 : 24),
+          );
+          final texts = Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(value, style: t.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700)),
+              ),
+              Text(label, style: t.textTheme.bodySmall, maxLines: 2, overflow: TextOverflow.ellipsis),
+            ],
+          );
+          return Padding(
+            padding: EdgeInsets.all(compact ? 12 : 16),
+            child: compact
+                ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    iconBox,
+                    const Spacer(),
+                    texts,
+                  ])
+                : Row(children: [iconBox, const SizedBox(width: 14), Expanded(child: texts)]),
+          );
+        }),
       ),
     );
   }

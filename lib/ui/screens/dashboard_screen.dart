@@ -83,14 +83,18 @@ class DashboardScreen extends StatelessWidget {
                     ),
                   ],
                   const SizedBox(height: 8),
-                  GridView.count(
-                    crossAxisCount: cols,
+                  GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: cols == 2 ? 1.9 : 2.6,
-                    children: cards,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: cols,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                      // Altura fixa que acompanha o tamanho de fonte escolhido.
+                      mainAxisExtent: MediaQuery.textScalerOf(context).scale(cols == 2 ? 136 : 106),
+                    ),
+                    itemCount: cards.length,
+                    itemBuilder: (_, i) => cards[i],
                   ),
                   const SizedBox(height: 8),
                   LayoutBuilder(builder: (context, c) {
